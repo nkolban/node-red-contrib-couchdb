@@ -1,0 +1,23 @@
+{
+  "name"         : "node-red-contrib-couchdb",
+  "version"      : "0.0.1",
+  "description"  : "A node-red couchdb node",
+  "license"      : "Apache-2.0",
+  "dependencies": {
+    "nano": "^6.2.0"
+  },
+  "author": "Neil Kolban <kolban@us.ibm.com>",
+  "keywords": [ "node-red", "couchdb", "ibm" ],
+  "node-red"     : {
+    "nodes": {
+      "couchdb": "couchdb.js"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nkolban/node-red-contrib-couchdb"
+  },
+  "engines": {
+    "node": ">=0.10"
+  }
+}
