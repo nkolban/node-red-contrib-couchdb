@@ -20,7 +20,7 @@
     inputs: 1,
     outputs: 1,
     icon: "db.png",
-    color: "#3FADB5",
+    color: "#73c5e7",
     label: function () {
       return this.name || "couchdb"
     },
@@ -39,17 +39,52 @@
       },
       retrievalType: {
         value: "byId"
+      },
+      designDoc: {
+        value: null
+      },
+      viewName: {
+        value: null
+      }
+    }
+  });
+  
+  RED.nodes.registerType('couchdbinsert',{
+    // node definition
+    category: "storage",
+    inputs: 1,
+    outputs: 0,
+    icon: "db.png",
+    color: "#73c5e7",
+    label: function () {
+      return this.name || "couchdb insert"
+    },
+    paletteLabel: "couchdb insert",
+    align: "right",
+    defaults: {
+      name: {
+        value: ""
+      },
+      serverUrl: {
+    	value: "",
+    	required: true
+      },
+      database: {
+        value: "",
+        required: true
       }
     }
   });
 </script>
 
 <script type="text/x-red" data-help-name="couchdb">
-<p>A node for searching documents in a couchdb database.</p>
+<p>A node for searching documents in a CouchDB database.</p>
 <p>Searching for documents can be done in a few modes.  Directly by using the documents
 <b>_id</b> or by using a key lookup in a view.</p>
-<p>When querying using the <b>_id</b> option, the value for the documents <code>_id</code>
+<p>When querying using the <b>by Id</b> option, the value for the documents <code>_id</code>
 should be passed in the <code>msg.payload</code> as a string.</p>
+<p>When querying using <b>by view</b> option, the value for the search key should
+be passed in the <code>msg.payload</code>.</p> 
 <p>The database name must follow these rules:
 <ul>
 <li>No spaces</li>
@@ -59,21 +94,85 @@ should be passed in the <code>msg.payload</code> as a string.</p>
 </p>
 </script>
 
+<script type="text/x-red" data-help-name="couchdbinsert">
+<p>A node for inserting documents in a CouchDB database.</p>
+<p>The document to be insert will be the JavaScript object found in <code>msg.payload</code>.
+To update an existing document, a valid <code>_rev</code> must also be present in the object.
+Before you use this node, make sure you understand the principles of working with CouchDB.</p>
+
+<p>The database name must follow these rules:
+<ul>
+<li>No spaces</li>
+<li>All letters in lower case</li>
+<li>The first character must not be <code>_</code></li>
+</ul>
+</p>
+</script>
+
+<!--
+*
+* couchdb
+* 
+-->
 <script type="text/x-red" data-template-name="couchdb">
-    <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Name">
-    </div>
-    <div class="form-row">
-        <label for="node-input-serverUrl"><i class="icon-tasks"></i> Server URL</label>
-        <input type="text" id="node-input-serverUrl" placeholder="Server URL">
-    </div>
-    <div class="form-row">
-        <label for="node-input-database"><i class="icon-tasks"></i> Database</label>
-        <input type="text" id="node-input-database" placeholder="Database">
-    </div>
-    <div class="form-row">
-        <label for="node-input-retrievalType"><i class="icon-tasks"></i> Retrieval Type</label>
-        <input type="text" id="node-input-retrievalType" placeholder="Retrieval Type">
-    </div>
+  <div class="form-row">
+    <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+    <input type="text" id="node-input-name" placeholder="Name">
+  </div>
+  <div class="form-row">
+    <label for="node-input-serverUrl"><i class="fa fa-server"></i> Server URL</label>
+    <input type="text" id="node-input-serverUrl" placeholder="Server URL">
+  </div>
+  <div class="form-row">
+    <label for="node-input-database"><i class="fa fa-database"></i> Database</label>
+    <input type="text" id="node-input-database" placeholder="Database">
+  </div>
+  <div class="form-row">
+    <label for="node-input-retrievalType"><i class="fa fa-random"></i> Type</label>
+    <select type="text" id="node-input-retrievalType">
+      <option value="byId">... by Id</option>
+      <option value="byView">... by View</option>
+    </select>
+  </div>
+  <div class="form-row node-input-designDoc">
+    <label for="node-input-designDoc"><i class="fa fa-book"></i> Design doc</label>
+    <input type="text" id="node-input-designDoc" placeholder="Design doc">
+  </div>
+  <div class="form-row node-input-viewName">
+    <label for="node-input-viewName"><i class="fa fa-binoculars"></i> View name</label>
+    <input type="text" id="node-input-viewName" placeholder="View name">
+  </div>
+
+  <script>
+  $("#node-input-retrievalType").change(function() {
+    var type = $("#node-input-retrievalType").val();
+    if (type == "byId") {
+      $(".node-input-designDoc").hide();
+      $(".node-input-viewName").hide();
+    } else {
+      $(".node-input-designDoc").show();
+      $(".node-input-viewName").show();
+    }
+  });
+  </script>
+</script>
+
+<!--
+*
+* couchdbinsert
+* 
+-->
+<script type="text/x-red" data-template-name="couchdbinsert">
+  <div class="form-row">
+    <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+    <input type="text" id="node-input-name" placeholder="Name">
+  </div>
+  <div class="form-row">
+    <label for="node-input-serverUrl"><i class="fa fa-server"></i> Server URL</label>
+    <input type="text" id="node-input-serverUrl" placeholder="Server URL">
+  </div>
+  <div class="form-row">
+    <label for="node-input-database"><i class="fa fa-database"></i> Database</label>
+    <input type="text" id="node-input-database" placeholder="Database">
+  </div>
 </script>
