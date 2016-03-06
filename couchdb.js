@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 Neil Kolban.
+ * Copyright 2016 Neil Kolban.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,24 +43,37 @@ module.exports = function(RED) {
     var db = nano.use(config.database);
     
     this.on("input", function(msg) {
-      // Process the request here
+      //
+      // Retrieve byId
+      //
       if (config.retrievalType == "byId") {
         db.get(msg.payload, function(err, body) {
           if (!err) {
             msg.payload = body;
             thisNode.send(msg);
-          }
+          } // End of no error
         }); // End of db.get
       } // End of byId
-      else if (config.retrievalType == "byView") {
-        db.view(config.designDoc, config.viewName, {
-          key: msg.payload,
-          include_docs: true
-        }, function(err, body) {
+      else
+        //
+        // Retrieve byView
+        //
+      if (config.retrievalType == "byView") {
+        //thisNode.log("key = " + JSON.stringify(msg.payload));
+        var params = {
+          include_docs: true  
+        };
+        // If there is a msg.payload, use that as the search key.  Otherwise
+        // no search key and all documents are returned.
+        if (msg.payload) {
+          params.key = msg.payload
+        }
+        db.view(config.designDoc, config.viewName, params, function(err, body) {
           if (!err) {
+            //thisNode.log("Result from lookup: " + JSON.stringify(body));
             msg.payload = body.rows;
             thisNode.send(msg);
-          }
+          } // End of no error
         }); // End of db.view
       } // End of byView
     }); // End of on "input"

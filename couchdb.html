@@ -19,7 +19,7 @@
     category: "storage",
     inputs: 1,
     outputs: 1,
-    icon: "db.png",
+    icon: "couchdb.png",
     color: "#73c5e7",
     label: function () {
       return this.name || "couchdb"
@@ -54,7 +54,7 @@
     category: "storage",
     inputs: 1,
     outputs: 0,
-    icon: "db.png",
+    icon: "couchdb.png",
     color: "#73c5e7",
     label: function () {
       return this.name || "couchdb insert"
@@ -146,12 +146,12 @@ Before you use this node, make sure you understand the principles of working wit
   <script>
   $("#node-input-retrievalType").change(function() {
     var type = $("#node-input-retrievalType").val();
-    if (type == "byId") {
-      $(".node-input-designDoc").hide();
-      $(".node-input-viewName").hide();
-    } else {
+    if (type == "byView") {
       $(".node-input-designDoc").show();
       $(".node-input-viewName").show();
+    } else {
+      $(".node-input-designDoc").hide();
+      $(".node-input-viewName").hide();
     }
   });
   </script>
